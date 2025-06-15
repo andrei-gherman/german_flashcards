@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>German Vocabulary Flashcards</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Main Menu -->
+        <div id="main-screen" class="screen active">
+            <div class="main-header">
+                <h1>Your deck</h1>
+                <div class="header-actions">
+                    <button class="btn btn--icon" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+                        <span id="theme-icon">
+                            <!-- Sun SVG (default) -->
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        </span>
+                    </button>
+                    <button class="btn btn--secondary btn--sm" id="create-deck-btn">
+                        <span>+ New Deck</span>
+                    </button>
+                    <button class="btn btn--outline btn--sm" id="import-apkg-btn">
+                        <span>Import .apkg</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="deck-list" class="deck-list">
+                <!-- Decks will be populated here -->
+            </div>
+        </div>
+
+        <!-- Create Deck Screen -->
+        <div id="create-deck-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn btn--outline btn--sm back-btn" id="back-to-main">← Back</button>
+                <h2>Create New Deck</h2>
+            </div>
+            
+            <div class="form-section">
+                <div class="form-group">
+                    <label class="form-label" for="deck-name">Deck Name</label>
+                    <input type="text" id="deck-name" class="form-control" placeholder="Enter deck name">
+                </div>
+                <button class="btn btn--primary" id="save-deck-btn">Create Deck</button>
+            </div>
+        </div>
+
+        <!-- Import APKG Screen -->
+        <div id="import-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn btn--outline btn--sm back-btn" id="back-to-main-import">← Back</button>
+                <h2>Import Anki Deck</h2>
+            </div>
+            
+            <div class="import-section">
+                <div class="file-input-wrapper">
+                    <input type="file" id="apkg-file" accept=".apkg" class="file-input">
+                    <label for="apkg-file" class="file-input-label btn btn--outline">
+                        Choose .apkg File
+                    </label>
+                </div>
+                
+                <div id="import-progress" class="import-progress hidden">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <p class="progress-text">Processing file...</p>
+                </div>
+                
+                <div id="import-status" class="import-status hidden">
+                    <!-- Status messages will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Deck View Screen -->
+        <div id="deck-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn btn--outline btn--sm back-btn" id="back-to-main-deck">← Back</button>
+                <h2 id="deck-title">Deck Name</h2>
+                <div class="deck-actions">
+                    <button class="btn btn--secondary btn--sm" id="add-card-btn">+ Add Card</button>
+                    <button class="btn btn--outline btn--sm" id="export-deck-btn">Export</button>
+                </div>
+            </div>
+            
+            <div class="deck-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Cards:</span>
+                    <span class="stat-value" id="total-cards">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Due Today:</span>
+                    <span class="stat-value" id="due-cards">0</span>
+                </div>
+            </div>
+            
+            <div class="deck-content">
+                <button class="btn btn--primary btn--lg study-btn" id="start-study-btn">Start Study Session</button>
+                <div id="card-list" class="card-list">
+                    <!-- Cards will be listed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Card Screen -->
+        <div id="add-card-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn btn--outline btn--sm back-btn" id="back-to-deck">← Back</button>
+                <h2>Add New Card</h2>
+            </div>
+            
+            <div class="form-section">
+                <div class="form-group">
+                    <label class="form-label" for="german-word">German Word/Phrase</label>
+                    <input type="text" id="german-word" class="form-control" placeholder="Enter German word">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="english-translation">English Translation</label>
+                    <input type="text" id="english-translation" class="form-control" placeholder="Enter English translation">
+                </div>
+                <button class="btn btn--primary" id="save-card-btn">Save Card</button>
+            </div>
+        </div>
+
+        <!-- Study Screen -->
+        <div id="study-screen" class="screen">
+            <div class="study-header">
+                <button class="btn btn--outline btn--sm" id="end-study-btn">End Session</button>
+                <div class="study-progress">
+                    <span id="study-counter">1 / 10</span>
+                </div>
+            </div>
+            
+            <div class="study-card">
+                <div class="card-content">
+                    <div class="card-side" id="german-side">
+                        <p id="german-text">Hallo</p>
+                    </div>
+                    <div class="card-side hidden" id="english-side">
+                        <p id="english-text">Hello</p>
+                    </div>
+                </div>
+                
+                <div class="study-controls">
+                    <button class="btn btn--outline" id="flip-card-btn">Show Answer</button>
+                    
+                    <div class="response-buttons hidden" id="response-buttons">
+                        <button class="btn response-btn response-btn--again" data-response="again">Again</button>
+                        <button class="btn response-btn response-btn--hard" data-response="hard">Hard</button>
+                        <button class="btn response-btn response-btn--good" data-response="good">Good</button>
+                        <button class="btn response-btn response-btn--easy" data-response="easy">Easy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
