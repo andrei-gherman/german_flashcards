@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Card - German Vocabulary Flashcards</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div style="position:absolute;top:32px;right:32px;z-index:10;">
+            <button class="btn btn--icon" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+                <span id="theme-icon">
+                    <svg class="icon-sun" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <svg class="icon-moon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+                </span>
+            </button>
+        </div>
+        <div id="add-card-screen" class="screen active">
+            <div class="screen-header">
+                <button class="btn btn--outline btn--sm back-btn" id="back-to-deck" onclick="location.href='deck.html'">← Back</button>
+                <h2>Add New Card</h2>
+            </div>
+            <div class="form-section">
+                <div class="form-group">
+                    <label class="form-label" for="german-word">German Word/Phrase</label>
+                    <input type="text" id="german-word" class="form-control" placeholder="Enter German word">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="english-translation">English Translation</label>
+                    <input type="text" id="english-translation" class="form-control" placeholder="Enter English translation">
+                </div>
+                <button class="btn btn--primary" id="save-card-btn">Save Card</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = window.app; // Get global app instance
+            if (!app) return;
+
+            const currentDeckId = localStorage.getItem('currentDeckId');
+            if (currentDeckId) {
+                app.currentDeck = app.decks.get(currentDeckId);
+                if (!app.currentDeck) {
+                    console.error('Deck not found for adding card:', currentDeckId);
+                    window.location.href = 'main.html'; // Redirect if deck not found
+                    return;
+                }
+            } else {
+                window.location.href = 'main.html'; // Redirect if no deck ID
+                return;
+            }
+
+            document.getElementById('save-card-btn').addEventListener('click', () => {
+                app.addCard();
+            });
+
+            document.getElementById('back-to-deck').addEventListener('click', () => {
+                localStorage.setItem('currentDeckId', app.currentDeck.id); // Ensure ID is saved before redirect
+                window.location.href = 'deck.html';
+            });
+        });
+    </script>
+</body>
+</html> 

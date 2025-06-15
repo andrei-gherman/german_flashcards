@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Deck - German Vocabulary Flashcards</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="import-screen" class="screen active">
+            <div class="screen-header">
+                <button class="btn btn--outline btn--sm back-btn" id="back-to-main" onclick="location.href='main.html'">← Back</button>
+                <h2>Import Deck</h2>
+                <div class="header-actions">
+                    <button class="btn btn--icon" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+                        <span id="theme-icon">
+                            <svg class="icon-sun" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                            <svg class="icon-moon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="import-section">
+                <div class="file-input-wrapper">
+                    <input type="file" id="file-input" class="file-input" accept=".apkg">
+                    <label for="file-input" class="btn btn--primary file-input-label">Choose .apkg file</label>
+                </div>
+                <div class="import-progress hidden">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <p class="progress-text">Importing...</p>
+                </div>
+                <div class="import-status hidden"></div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = window.app; // Get global app instance
+            if (!app) return;
+
+            document.getElementById('file-input').addEventListener('change', (e) => {
+                app.handleApkgImport(e);
+            });
+
+            document.getElementById('back-to-main').addEventListener('click', () => {
+                window.location.href = 'main.html';
+            });
+        });
+    </script>
+</body>
+</html> 

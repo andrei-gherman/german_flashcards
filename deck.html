@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Set theme immediately before any rendering
+        const saved = localStorage.getItem('color-scheme');
+        if (saved === 'dark' || saved === 'light') {
+            document.documentElement.setAttribute('data-color-scheme', saved);
+        } else {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.setAttribute('data-color-scheme', prefersDark ? 'dark' : 'light');
+        }
+    </script>
+    <meta name="theme-color" content="#fcfcf9" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1f2121" media="(prefers-color-scheme: dark)">
+    <title>Deck View - German Vocabulary Flashcards</title>
+    <style>
+        html, body {
+            background-color: #fcfcf9;
+            margin: 0;
+            padding: 0;
+        }
+        [data-color-scheme="dark"] html,
+        [data-color-scheme="dark"] body {
+            background-color: #1f2121;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="deck-screen" class="screen active">
+            <div class="screen-header">
+                <button class="btn btn--outline btn--sm back-btn" id="back-to-main-deck" onclick="location.href='main.html'">← Back</button>
+                <h2 id="deck-title">Deck Name</h2>
+                <div class="deck-actions">
+                    <button class="btn btn--secondary btn--sm" id="add-card-btn" onclick="location.href='add-card.html'">+ Add Card</button>
+                    <button class="btn btn--outline btn--sm" id="export-deck-btn">Export</button>
+                    <button class="btn btn--icon" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+                        <span id="theme-icon">
+                            <svg class="icon-sun" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                            <svg class="icon-moon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="deck-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Cards:</span>
+                    <span class="stat-value" id="total-cards">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Due Today:</span>
+                    <span class="stat-value" id="due-cards">0</span>
+                </div>
+            </div>
+            <div class="deck-content">
+                <button class="btn btn--primary btn--lg study-btn" id="start-study-btn" onclick="location.href='study.html'">Start Study Session</button>
+                <div id="card-list" class="card-list">
+                    <!-- Cards will be listed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = window.app; // Get global app instance
+            if (!app) return;
+
+            const currentDeckId = localStorage.getItem('currentDeckId');
+            if (currentDeckId) {
+                app.showDeckScreen(currentDeckId);
+            } else {
+                window.location.href = 'main.html'; // Redirect if no deck ID
+            }
+
+            document.getElementById('add-card-btn').addEventListener('click', () => {
+                localStorage.setItem('currentDeckId', app.currentDeck.id); // Ensure ID is saved before redirect
+                window.location.href = 'add-card.html';
+            });
+
+            document.getElementById('export-deck-btn').addEventListener('click', () => {
+                app.exportDeck();
+            });
+
+            document.getElementById('start-study-btn').addEventListener('click', () => {
+                app.startStudySession();
+            });
+
+            document.getElementById('back-to-main-deck').addEventListener('click', () => {
+                window.location.href = 'main.html';
+            });
+        });
+    </script>
+</body>
+</html> 
